@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: http-api
+          image: rmasclef/go-http-api:v1.2.0
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PG_HOST
+              value: postgres #opstgres cluster-ip name
+            - name: PG_PORT
+              value: "5432"
+            - name: PG_USER
+              value: postgres
+            - name: PG_DATABASE
+              value: postgres
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres #secret name
+                  key: PG_PASSWORD
